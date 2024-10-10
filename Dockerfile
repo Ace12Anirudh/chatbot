@@ -1,17 +1,22 @@
-# Use an official Nginx image.
 FROM nginx:alpine
 
-# Set working directory to /app
-WORKDIR /app
+# Install PHP and necessary extensions
+RUN apk add --no-cache php82 php82-fpm php82-opcache php82-pdo php82-pdo_mysql php82-mysqli php82-json php82-curl php82-gd php82-mbstring php82-xml php82-zip
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Create directory for your app
+RUN mkdir /var/www/html/app
 
-# Copy the nginx configuration file into the container at /etc/nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy your application code
+COPY . /var/www/html/app
 
-# Make port 80 available to the world outside this container
+# Configure PHP-FPM
+COPY php-fpm.conf /etc/php82/php-fpm.d/www.conf
+
+# Configure Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
 EXPOSE 80
 
-# Run Nginx when the container launches
-CMD ["nginx", "-g", "daemon off;"]
+# Start PHP-FPM and Nginx
+CMD ["/usr/bin/php-fpm82", "-F", "-R"] && nginx -g "daemon off;"
