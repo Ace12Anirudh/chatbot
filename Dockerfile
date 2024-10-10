@@ -2,7 +2,7 @@
 FROM nginx:alpine
 
 # Copy your static website files (HTML, CSS, JS) to the Nginx default location
-COPY . /usr/share/nginx/html
+COPY . /usr/share/nginx/php
 
 # Expose port 80
 EXPOSE 80
